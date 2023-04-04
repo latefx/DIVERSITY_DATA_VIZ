@@ -4,10 +4,12 @@ document.getElementById("clear-data").addEventListener("click", clearData);
 
 const subcategories = ["Skin Tone", "Sizing", "Mannequin Diversity", "Adaptability", "Marketing", "Co-Gender"];
 
-function addStore() {
-  const storeName = document.getElementById("store-name").value;
-
-  if (!storeName) return;
+function addStore(storeName) {
+  if (!storeName) {
+    storeName = document.getElementById("store-name").value;
+    if (!storeName) return;
+    document.getElementById("store-name").value = "";
+  }
 
   const storeContainer = document.createElement("div");
   storeContainer.classList.add("store");
@@ -47,7 +49,6 @@ function addStore() {
     storeContainer.appendChild(subcategoryDiv);
   });
 
-  document.getElementById("store-name").value = "";
   document.getElementById("store-container").appendChild(storeContainer);
 }
 
@@ -73,10 +74,10 @@ function loadData() {
     });
   });
 
-  updateChart(); // Add this line at the end of loadData function.
+  updateChart();
 }
 
-let chart; // Added this line outside the loadData function.
+let chart;
 
 function updateChart() {
   if (chart) {
