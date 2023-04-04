@@ -1,4 +1,4 @@
-document.getElementById("add-store").addEventListener("click", addStore);
+document.getElementById("add-store").addEventListener("click", () => addStore());
 document.getElementById("load-data").addEventListener("click", loadData);
 document.getElementById("clear-data").addEventListener("click", clearData);
 
@@ -68,9 +68,9 @@ function loadData() {
   data = JSON.parse(data);
   document.getElementById("store-container").innerHTML = "";
   data.forEach((store) => {
-    const storeElem = addStore(store.name);
+    addStore(store.name);
     store.tallies.forEach((tally, index) => {
-      storeElem.querySelectorAll(".subcategory")[index].querySelector("p:last-of-type").innerHTML = tally;
+      document.querySelectorAll(".subcategory")[index].querySelector("p:last-of-type").innerHTML = tally;
     });
   });
 
@@ -86,7 +86,6 @@ function updateChart() {
 
   const ctx = document.getElementById("chart").getContext("2d");
 
-  // Prepare datasets
   const stores = document.querySelectorAll(".store");
   const datasets = [];
 
