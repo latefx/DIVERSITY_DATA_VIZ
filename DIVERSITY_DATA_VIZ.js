@@ -50,6 +50,7 @@ function addStore(storeName) {
   });
 
   document.getElementById("store-container").appendChild(storeContainer);
+  updateChart(); // Update the chart after adding a new store
 }
 
 function updateCounter(element, value) {
@@ -58,6 +59,7 @@ function updateCounter(element, value) {
   count += value;
   if (count < 0) count = 0;
   counter.innerHTML = count;
+  updateChart(); // Update the chart after updating the counter
 }
 
 function loadData() {
