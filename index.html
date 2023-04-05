@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +17,9 @@
       <button id="sort-stores">Sort Stores by Total</button>
       <button id="show-import-modal">Import Data</button>
       <input type="file" id="import-data" accept=".csv" style="display:none;">
-      <select onchange="changeSubCategory()" id="subCategory"/>
+      <select onchange="changeSubCategory()" id="subCategory">
+        <!-- Add subcategory options here -->
+      </select>
       <button id="add-subcategory">Add Subcategory</button>
     </div>
     <div>
@@ -35,7 +38,7 @@
   <div id="chart-container">
     <canvas id="chart"></canvas>
   </div>
-  <button id="load-data">Load Data</button>
+  <button id="load-data">Load Data</button> <!-- This button loads data from local storage -->
   <button id="clear-data">Clear Data</button>
   <button id="export-data">Export Data</button>
   <button onclick="openComparisonPage()">View Comparison Page</button>
