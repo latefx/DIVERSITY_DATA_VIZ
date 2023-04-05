@@ -39,6 +39,7 @@ addStoreBtn.addEventListener("click", () => {
   const storeName = prompt("Enter store name:");
   if (storeName) {
     addStore(storeName);
+    saveData();
   }
 });
 
@@ -71,6 +72,7 @@ function addStore(name) {
         chartData.labels.indexOf(name)
       ] = parseInt(count.textContent);
       chart.update();
+      saveData();
     });
     subCategoryDiv.appendChild(incrementBtn);
 
@@ -83,6 +85,7 @@ function addStore(name) {
           chartData.labels.indexOf(name)
         ] = parseInt(count.textContent);
         chart.update();
+        saveData();
       }
     });
     subCategoryDiv.appendChild(decrementBtn);
@@ -91,3 +94,59 @@ function addStore(name) {
   chart.data.labels = chartData.labels;
   chart.update();
 }
+
+function saveData() {
+  localStorage.setItem("chartData", JSON.stringify(chartData));
+}
+
+function loadData() {
+  const loadedData = localStorage.getItem("chartData");
+
+  if (loadedData) {
+    const parsedData = JSON.parse(loadedData);
+    chartData.labels = parsedData.labels;
+    parsedData.datasets.forEach((dataset, index) => {
+      chartData.datasets[index].data = dataset.data;
+    });
+
+    parsedData.labels.forEach((label) => addStore(label));
+    chart.update();
+  }
+}
+
+function clearData() {
+  localStorage.removeItem("chartData");
+  location.reload();
+}
+
+function exportData() {
+  let csvContent = "data:text/csv;charset=utf-8,";
+  csvContent += "Store," + subCategories.join(",") + "\r\n";
+
+  chartData.labels.forEach((label, index) => {
+    const rowData = [label];
+    chartData.datasets.forEach((dataset) => {
+      rowData.push(dataset.data[index]);
+    });
+
+    csvContent += rowData.join(",") + "\r\n";
+  });
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "data.csv");
+  document.body.appendChild(link);
+
+  link.click();
+}
+
+const loadBtn = document.getElementById("load-data");
+const clearBtn = document.getElementById("clear-data");
+const exportBtn = document.getElementById("export-data");
+
+loadBtn.addEventListener("click", loadData);
+clearBtn.addEventListener("click", clearData);
+exportBtn.addEventListener("click", exportData);
+
+loadData(); // Load data when the app starts
