@@ -2,6 +2,9 @@ const mainContainer = document.getElementById("main-container");
 const storeContainer = document.getElementById("store-container");
 const addStoreBtn = document.getElementById("add-store");
 const chartCanvas = document.getElementById("chart");
+const showImportModalBtn = document.getElementById("show-import-modal");
+const importDataInput = document.getElementById("import-data");
+const chartTypeSelector = document.getElementById("chart-type");
 
 const subCategories = [
   "Skin Tone",
@@ -12,7 +15,7 @@ const subCategories = [
   "Co-Gender",
 ];
 
-const chartData = {
+let chartData = {
   labels: [],
   datasets: subCategories.map((category) => ({
     label: category,
@@ -43,6 +46,51 @@ addStoreBtn.addEventListener("click", () => {
   }
 });
 
+showImportModalBtn.addEventListener("click", () => {
+  importDataInput.click();
+});
+
+importDataInput.addEventListener("change", () => {
+  const file = importDataInput.files[0];
+  if (!file) return;
+
+  const fileReader = new FileReader();
+  fileReader.onload = (event) => {
+    const lines = event.target.result.split("\n");
+    if (lines.length) {
+      const header = lines[0].split(",");
+
+      if (header.length - 1 !== subCategories.length || header[0] !== "Store") {
+        alert("Invalid CSV format. Please use the correct template.");
+        return;
+      }
+
+      for (let i = 1; i < lines.length; i++) {
+        const data = lines[i].split(",");
+        if (data.length === header.length) {
+          addStore(data[0]);
+
+          for (let j = 1; j < data.length; j++) {
+            chartData.datasets[j - 1].data[
+              chartData.labels.indexOf(data[0])
+            ] = parseInt(data[j]);
+          }
+        }
+      }
+
+      chart.update();
+      saveData();
+    }
+  };
+  fileReader.readAsText(file);
+});
+
+chartTypeSelector.addEventListener("change", () => {
+  const newChartType =(chartTypeSelector.value);
+  chart.config.type = newChartType;
+  chart.update();
+});
+
 function addStore(name) {
   const storeDiv = document.createElement("div");
   storeDiv.classList.add("store");
@@ -51,7 +99,7 @@ function addStore(name) {
 
   chartData.labels.push(name);
 
-  subCategories.forEach((category, index) => {
+  subCategories.forEach((category, newIndex) => {
     const subCategoryDiv = document.createElement("div");
     subCategoryDiv.classList.add("subcategory");
     storeDiv.appendChild(subCategoryDiv);
@@ -68,7 +116,7 @@ function addStore(name) {
     incrementBtn.textContent = "+";
     incrementBtn.addEventListener("click", () => {
       count.textContent = parseInt(count.textContent) + 1;
-      chartData.datasets[index].data[
+      chartData.datasets[newIndex].data[
         chartData.labels.indexOf(name)
       ] = parseInt(count.textContent);
       chart.update();
@@ -81,7 +129,7 @@ function addStore(name) {
     decrementBtn.addEventListener("click", () => {
       if (parseInt(count.textContent) > 0) {
         count.textContent = parseInt(count.textContent) - 1;
-        chartData.datasets[index].data[
+        chartData.datasets[newIndex].data[
           chartData.labels.indexOf(name)
         ] = parseInt(count.textContent);
         chart.update();
@@ -96,22 +144,31 @@ function addStore(name) {
 }
 
 function saveData() {
-  localStorage.setItem("chartData", JSON.stringify(chartData));
+  localStorage.setItem("chartData", JSON.stringify({
+    labels: chartData.labels,
+    datasets: chart.data.datasets,
+    subCategories: chart.data.datasets.map(dataset => dataset.label)
+  }));
 }
 
 function loadData() {
-  const loadedData = localStorage.getItem("chartData");
+  let savedData = localStorage.getItem("chartData");
+  savedData = savedData ? JSON.parse(savedData) : {};
 
-  if (loadedData) {
-    const parsedData = JSON.parse(loadedData);
-    chartData.labels = parsedData.labels;
-    parsedData.datasets.forEach((dataset, index) => {
-      chartData.datasets[index].data = dataset.data;
-    });
+  chartData.labels = savedData.labels || [];
+  chartData.datasets = savedData.datasets || [];
 
-    parsedData.labels.forEach((label) => addStore(label));
-    chart.update();
+  if (savedData.subCategories) {
+    subCategories.length = 0;
+    Array.prototype.push.apply(subCategories, savedData.subCategories);
   }
+
+  chartData.labels.forEach((label) => {
+    addStore(label);
+  });
+
+  chart.data = chartData;
+  chart.update();
 }
 
 function clearData() {
@@ -119,34 +176,5 @@ function clearData() {
   location.reload();
 }
 
-function exportData() {
-  let csvContent = "data:text/csv;charset=utf-8,";
-  csvContent += "Store," + subCategories.join(",") + "\r\n";
-
-  chartData.labels.forEach((label, index) => {
-    const rowData = [label];
-    chartData.datasets.forEach((dataset) => {
-      rowData.push(dataset.data[index]);
-    });
-
-    csvContent += rowData.join(",") + "\r\n";
-  });
-
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "data.csv");
-  document.body.appendChild(link);
-
-  link.click();
-}
-
-const loadBtn = document.getElementById("load-data");
-const clearBtn = document.getElementById("clear-data");
-const exportBtn = document.getElementById("export-data");
-
-loadBtn.addEventListener("click", loadData);
-clearBtn.addEventListener("click", clearData);
-exportBtn.addEventListener("click", exportData);
-
-loadData(); // Load data when the app starts
+document.getElementById("load-data").addEventListener("click", loadData);
+document.getElementById("clear-data").addEventListener("click", clearData);
