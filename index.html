@@ -9,19 +9,36 @@
 </head>
 <body>
   <h1>Data Visualizer</h1>
-  <div class="input-container">
-    <input type="text" id="store-name" placeholder="Store Name">
-    <button id="add-store">Add Store</button>
+  <div class="controls">
+    <div class="input-container">
+      <input type="text" id="store-name" placeholder="Store Name">
+      <button id="add-store">Add Store</button>
+      <button id="sort-stores">Sort Stores by Total</button>
+      <button id="show-import-modal">Import Data</button>
+      <input type="file" id="import-data" accept=".csv" style="display:none;">
+      <select onchange="changeSubCategory()" id="subCategory"/>
+      <button id="add-subcategory">Add Subcategory</button>
+    </div>
+    <div>
+      <label for="chart-type">Chart Type:</label>
+      <select id="chart-type">
+        <option value="bar">Bar</option>
+        <option value="line">Line</option>
+        <option value="pie">Pie</option>
+        <option value="doughnut">Doughnut</option>
+      </select>
+    </div>
   </div>
   <div id="main-container">
     <div id="store-container"></div>
   </div>
-  <div>
+  <div id="chart-container">
     <canvas id="chart"></canvas>
   </div>
   <button id="load-data">Load Data</button>
   <button id="clear-data">Clear Data</button>
   <button id="export-data">Export Data</button>
+  <button onclick="openComparisonPage()">View Comparison Page</button>
   <script src="dataVisualizer.js"></script>
 </body>
 </html>
