@@ -1,11 +1,10 @@
+```javascript
 const mainContainer = document.getElementById("main-container");
 const storeContainer = document.getElementById("store-container");
 const addStoreBtn = document.getElementById("add-store");
 const chartCanvas = document.getElementById("chart");
 const showImportModalBtn = document.getElementById("show-import-modal");
 const importDataInput = document.getElementById("import-data");
-const showSummaryBtn = document.getElementById("show-summary");
-const storeNameInput = document.getElementById("store-name");
 
 const subCategories = [
   "Skin Tone",
@@ -40,11 +39,11 @@ const chart = new Chart(chartCanvas.getContext("2d"), {
 });
 
 addStoreBtn.addEventListener("click", () => {
-  const storeName = storeNameInput.value;
+  const storeName = document.getElementById("store-name").value;
   if (storeName) {
     addStore(storeName);
     saveData();
-    storeNameInput.value = "";
+    document.getElementById("store-name").value = "";
   }
 });
 
@@ -160,11 +159,21 @@ function clearData() {
 
 document.getElementById("clear-data").addEventListener("click", clearData);
 
-showSummaryBtn.addEventListener("click", () => {
-  const summary = subCategories.map((category, index) => {
-    const totalYes = chartData.datasets[index].data.reduce((total, value) => total + (value === 1 ? 1 : 0), 0);
-    const percentage = (totalYes / chartData.labels.length) * 100;
-    return `${category}: ${percentage.toFixed(2)}% stores have this feature`;
-  }).join("\n");
-  alert(summary);
-});
+function exportData() {
+  let csvContent = "data:text/csv;charset=utf-8,Store," + subCategories.join(",") + "\n";
+
+  chartData.labels.forEach((label, index) => {
+    const rowData = [label].concat(chartData.datasets.map(dataset => dataset.data[index])).join(",");
+    csvContent += rowData + "\n";
+  });
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "chart_data.csv");
+  document.body.appendChild(link);
+
+  link.click();
+}
+
+document.getElementById("export-data").addEventListener("click", exportData);
