@@ -141,6 +141,7 @@ body.light-mode .compare-store {
 body.light-mode .arrow {
   border-top-color: #333;
 }
+
 #chart-container {
   position: relative;
   width: 100%;
