@@ -4,7 +4,8 @@ const addStoreBtn = document.getElementById("add-store");
 const chartCanvas = document.getElementById("chart");
 const showImportModalBtn = document.getElementById("show-import-modal");
 const importDataInput = document.getElementById("import-data");
-const chartTypeSelector = document.getElementById("chart-type");
+const showSummaryBtn = document.getElementById("show-summary");
+const storeNameInput = document.getElementById("store-name");
 
 const subCategories = [
   "Skin Tone",
@@ -39,10 +40,11 @@ const chart = new Chart(chartCanvas.getContext("2d"), {
 });
 
 addStoreBtn.addEventListener("click", () => {
-  const storeName = prompt("Enter store name:");
+  const storeName = storeNameInput.value;
   if (storeName) {
     addStore(storeName);
     saveData();
+    storeNameInput.value = "";
   }
 });
 
@@ -83,12 +85,6 @@ importDataInput.addEventListener("change", () => {
     }
   };
   fileReader.readAsText(file);
-});
-
-chartTypeSelector.addEventListener("change", () => {
-  const newChartType =(chartTypeSelector.value);
-  chart.config.type = newChartType;
-  chart.update();
 });
 
 function addStore(name) {
@@ -156,9 +152,19 @@ function loadData() {
 }
 
 function clearData() {
-  localStorage.removeItem("chartData");
-  location.reload();
+  if (confirm("Are you sure you want to delete your data?")) {
+    localStorage.removeItem("chartData");
+    location.reload();
+  }
 }
 
-document.getElementById("load-data").addEventListener("click", loadData);
 document.getElementById("clear-data").addEventListener("click", clearData);
+
+showSummaryBtn.addEventListener("click", () => {
+  const summary = subCategories.map((category, index) => {
+    const totalYes = chartData.datasets[index].data.reduce((total, value) => total + (value === 1 ? 1 : 0), 0);
+    const percentage = (totalYes / chartData.labels.length) * 100;
+    return `${category}: ${percentage.toFixed(2)}% stores have this feature`;
+  }).join("\n");
+  alert(summary);
+});
