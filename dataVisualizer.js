@@ -1,4 +1,4 @@
-```javascript
+
 const mainContainer = document.getElementById("main-container");
 const storeContainer = document.getElementById("store-container");
 const addStoreBtn = document.getElementById("add-store");
