@@ -1,8 +1,10 @@
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color: #f5f5f5;
+  margin: 10px;
+  padding: 60px;
+  padding-top: 50px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 1) 100%);
+  color: #fff;
 }
 
 .controls {
@@ -25,74 +27,122 @@ select {
   padding: 4px 8px;
   font-size: 16px;
   cursor: pointer;
+  color: #fff;
+  background-color: #333;
+  border: 1px solid #999;
+  border-radius: 3px;
+}
+
+button:hover,
+select:hover {
+  background-color: #666;
 }
 
 #main-container {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 20px;
+  position: relative;
 }
 
-.store,
-.compare-store {
+h1 {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  margin: 0;
+  padding: 0px;
+  z-index: 1;
+}
+
+#arrow-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-right: 20px;
-  margin-bottom: 40px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  gap: 4px;
+  z-index: 1;
 }
 
-.chart {
-  width: 100%;
-  max-width: 1200px;
-  height: 400px;
-  margin-bottom: 20px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.arrow {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 8px solid #000;
+  opacity: 0.8;
+  animation: bounce 0.8s infinite;
 }
 
-.subcategory {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 10px;
+.arrow:nth-child(2) {
+  animation-delay: 0.2s;
 }
 
-.subcategory span {
-  font-weight: 500;
+.arrow:nth-child(3) {
+  animation-delay: 0.4s;
 }
 
-.subcategory button {
-  margin-right: 4px;
-  padding: 4px 6px;
-  color: #333;
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+body.light-mode {
+  background: #f5f5f5;
+  color: #000;
+}
+
+body.light-mode button,
+body.light-mode select {
+  color: #000;
+  background-color: #ccc;
   border: 1px solid #999;
-  border-radius: 3px;
 }
 
-.subcategory button:hover {
+body.light-mode button:hover,
+body.light-mode select:hover {
+  background-color: #999;
+}
+
+body.light-mode .store,
+body.light-mode .compare-store {
+  background-color: #fff;
+}
+
+.light-mode {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 1) 100%);
+  color: #000;
+}
+
+.light-mode button,
+.light-mode select {
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+
+.light-mode button:hover,
+.light-mode select:hover {
   background-color: #e6e6e6;
 }
 
-@media screen and (max-width: 768px) {
-  #main-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .store {
-    margin-right: 0;
-  }
+.light-mode .store,
+.light-mode .compare-store {
+  background-color: #fff;
 }
 
-#clear-data {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+body.light-mode .arrow {
+  border-top-color: #333;
+}
+#chart-container {
+  position: relative;
+  width: 100%;
+  height: 50vh;
 }
