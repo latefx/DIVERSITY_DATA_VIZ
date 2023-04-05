@@ -90,3 +90,9 @@ select {
     margin-right: 0;
   }
 }
+
+#clear-data {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
