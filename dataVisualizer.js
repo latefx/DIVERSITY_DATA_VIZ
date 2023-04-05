@@ -104,39 +104,23 @@ function addStore(name) {
     subCategoryDiv.classList.add("subcategory");
     storeDiv.appendChild(subCategoryDiv);
 
-    const count = document.createElement("span");
-    count.textContent = "0";
-    subCategoryDiv.appendChild(count);
-
     const title = document.createElement("span");
     title.textContent = category;
     subCategoryDiv.appendChild(title);
 
-    const incrementBtn = document.createElement("button");
-    incrementBtn.textContent = "+";
-    incrementBtn.addEventListener("click", () => {
-      count.textContent = parseInt(count.textContent) + 1;
+    const select = document.createElement("select");
+    select.innerHTML = `
+      <option value="0">No</option>
+      <option value="1">Yes</option>
+    `;
+    select.addEventListener("change", () => {
       chartData.datasets[newIndex].data[
         chartData.labels.indexOf(name)
-      ] = parseInt(count.textContent);
+      ] = parseInt(select.value);
       chart.update();
       saveData();
     });
-    subCategoryDiv.appendChild(incrementBtn);
-
-    const decrementBtn = document.createElement("button");
-    decrementBtn.textContent = "-";
-    decrementBtn.addEventListener("click", () => {
-      if (parseInt(count.textContent) > 0) {
-        count.textContent = parseInt(count.textContent) - 1;
-        chartData.datasets[newIndex].data[
-          chartData.labels.indexOf(name)
-        ] = parseInt(count.textContent);
-        chart.update();
-        saveData();
-      }
-    });
-    subCategoryDiv.appendChild(decrementBtn);
+    subCategoryDiv.appendChild(select);
   });
 
   chart.data.labels = chartData.labels;
